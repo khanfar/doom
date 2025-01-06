@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>doomgeneric</title>
+    <style>
+      html { background-color: black; }
+      canvas {
+        width: 100vw;
+        height: calc(100vh / 1.2);
+        object-fit: contain;
+        transform: scaleY(1.2);
+        transform-origin: top;
+        image-rendering: pixelated;
+      }
+      #status { color: white; }
+    </style>
+</head>
+<body>
+    <div id="status">Downloading...</div>
+    <progress value="0" max="100" id="progress" hidden=1></progress>
+    <canvas id="canvas" tabindex=-1></canvas>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+      var canvas = document.getElementById('canvas');
+
+      var Module = {
+        preRun: [],
+        postRun: [],
+        print: function(text) {
+          console.log(text);
+          statusElement.textContent = text;
+        },
+        printErr: function(text) {
+          console.error(text);
+          statusElement.textContent = 'Error: ' + text;
+        },
+        canvas: canvas,
+        setStatus: function(text) {
+          console.log('Status:', text);
+          statusElement.textContent = text;
+          if (text.includes('Downloading')) {
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+        },
+        onRuntimeInitialized: function() {
+          console.log('Runtime initialized');
+          statusElement.textContent = 'Runtime initialized';
+        },
+        locateFile: function(path, prefix) {
+          console.log('Loading file:', path);
+          return prefix + path;
+        }
+      };
+
+      window.onerror = function(msg, url, line, col, error) {
+        console.error('Error:', msg, '\nAt:', url, ':', line, ':', col);
+        statusElement.textContent = 'Error: ' + msg;
+        return false;
+      };
+    </script>
+    <script async type="text/javascript" src="doomgeneric.js"></script>
+</body>
+</html>
